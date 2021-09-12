@@ -1,140 +1,117 @@
-$(document).ready(function() {
+var smoke = document.getElementById('smoke-1');
+var smoke2 = document.getElementById('smoke-2');
+var smoke3 = document.getElementById('smoke-3');
+var smoke4 = document.getElementById('smoke-4');
+var smoke5 = document.getElementById('smoke-5');
+var smoke6 = document.getElementById('smoke-6');
 
-  var padOne = new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/SD0025.mp3');
-  $('.pad-1').mousedown(function() {
-    padOne.load()
-    padOne.play();
-  });
+var timeline = new TimelineMax({ repeat: -1 });
 
-  var padTwo = new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/SD0010.mp3');
-  $('.pad-2').mousedown(function() {
-    padTwo.load();
-    padTwo.play();
-  });
+var timeline2 = new TimelineMax({ repeat: -1 });
 
-  var padThree = new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/SD0000.mp3');
-  $('.pad-3').mousedown(function() {
-    padThree.load();
-    padThree.play();
-  });
+timeline.fromTo(
+  smoke,
+  2.3,
+  {
+    scale: 1,
+    x: '-10px',
+    y: '-10px',
+    opacity: 1,
+    ease: Power1.easeInOut
+  },
+  {
+    scale: 2.2,
+    opacity: 0,
+    y: '-80px',
+    ease: Power1.easeInOut
+  }
+).fromTo(
+  smoke2,
+  2.3,
+  {
+    scale: 1,
+    x: '-5px',
+    y: '-10px',
+    opacity: 1,
+    ease: Power1.easeInOut
+  },
+  {
+    scale: 2.3,
+    opacity: 0,
+    y: '-65px',
+    ease: Power1.easeInOut
+  },
+  '-=2'
+).fromTo(
+  smoke3,
+  2.3,
+  {
+    scale: 1,
+    x: '-5px',
+    y: '30px',
+    opacity: 1,
+    ease: Power1.easeInOut
+  },
+  {
+    scale: 2,
+    opacity: 0,
+    y: '-20px',
+    ease: Power1.easeInOut
+  },
+  '-=2.2'
+)
 
-  var padFour = new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/RS.mp3');
-  $('.pad-4').mousedown(function() {
-    padFour.load();
-    padFour.play();
-  });
+timeline2.fromTo(
+  smoke4,
+  2.3,
+  {
+    scale: 1,
+    x: '-5px',
+    y: '-10px',
+    opacity: 1,
+    ease: Power1.easeInOut
+  },
+  {
+    scale: 2.6,
+    opacity: 0,
+    y: '-80px',
+    ease: Power1.easeInOut
+  }
+).fromTo(
+  smoke5,
+  2.3,
+  {
+    scale: 1,
+    x: '-10px',
+    y: '-10px',
+    opacity: 1,
+    ease: Power1.easeInOut
+  },
+  {
+    scale: 2.8,
+    opacity: 0,
+    y: '-70px',
+    ease: Power1.easeInOut
+  },
+  '-=1.8'
+).fromTo(
+  smoke6,
+  2.3,
+  {
+    scale: 1,
+    x: '0px',
+    y: '5px',
+    opacity: 1,
+    ease: Power1.easeInOut
+  },
+  {
+    scale: 2.4,
+    opacity: 0,
+    y: '-70px',
+    ease: Power1.easeInOut
+  },
+  '-=2.0'
+)
 
-  var padFive = new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/OH25.mp3');
-  $('.pad-5').mousedown(function() {
-    padFive.load();
-    padFive.play();
-  });
-
-  var padSix = new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/MA.mp3');
-  $('.pad-6').mousedown(function() {
-    padSix.load();
-    padSix.play();
-  });
-
-  var padSeven = new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/CY0010.mp3');
-  $('.pad-7').mousedown(function() {
-    padSeven.load();
-    padSeven.play();
-  });
-  
-  var padEight = new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/CH.mp3');
-  $('.pad-8').mousedown(function() {
-    padEight.load();
-    padEight.play();
-  });
-
-  var padNine = new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/CB.mp3');
-  $('.pad-9').mousedown(function() {
-    padNine.load();
-    padNine.play();
-  });
-  
-  var padTen = new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/BD0010.mp3');
-  $('.pad-10').mousedown(function() {
-    padTen.load();
-    padTen.play();
-  });
-  
-  var padEleven = new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/BD0000.mp3');
-  $('.pad-11').mousedown(function() {
-    padEleven.load();
-    padEleven.play();
-  });
-  
-  var padTwelve = new Audio('https://s3-us-west-2.amazonaws.com/s.cdpn.io/242518/CP.mp3');
-  $('.pad-12').mousedown(function() {
-    padTwelve.load();
-    padTwelve.play();
-  });
-  
-  
-  $(window).keydown(function(e) {
-    var code = e.keyCode;
-    var kc = String.fromCharCode(e.keyCode);
-    $("div[data-code='"+code+"']").addClass("active")
-    console.log(code);
-    
-    switch(kc) {
-      case "R":
-        padOne.load();
-        padOne.play();
-        break;
-      case "T":
-        padTwo.load();
-        padTwo.play();
-        break;
-      case "Y":
-        padThree.load();
-        padThree.play();
-        break;
-      case "U":
-        padFour.load();
-        padFour.play();
-        break;
-      case "F":
-        padFive.load();
-        padFive.play();
-        break;
-      case "G":
-        padSix.load();
-        padSix.play();
-        break;
-      case "H":
-        padSeven.load();
-        padSeven.play();
-        break;
-      case "J":
-        padEight.load();
-        padEight.play();
-        break;
-      case "V":
-        padNine.load();
-        padNine.play();
-        break;
-      case "B":
-        padTen.load();
-        padTen.play();
-        break;
-      case "N":
-        padEleven.load();
-        padEleven.play();
-        break;
-      case "M":
-        padTwelve.load();
-        padTwelve.play();
-        break;
-      default:
-    }
-  });
-
-  $(window).keyup(function(e) { 
-    var code = e.keyCode;
-    $("div[data-code='"+code+"']").removeClass("active");
-  });
-
-});
+timeline.timeScale(0.8);
+timeline2.timeScale(0.7);
