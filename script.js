@@ -49,4 +49,11 @@ var clickHandlerMSG = function(){
   rtdb.push(chats, msg);
 }
 
+var clickHandlerClear = function(){
+  var msg = document.querySelector("#msg").value;
+  rtdb.set(chats, []);
+  document.querySelector("#chatsloc").innerHTML = "no messages";
+}
+
 document.querySelector("#sendmsg").addEventListener("click", clickHandlerMSG);
+document.querySelector("#clear").addEventListener("click", clickHandlerClear);
