@@ -1,5 +1,5 @@
 body {
-  background-color: pink
+  background-color: lightgray
 }
 
 #part1 {
@@ -7,7 +7,7 @@ body {
   margin-left: 10%;
   margin-right: 10%;
   text-align: center;
-  border: 5px solid purple;
+  border: 5px solid blue;
 }
 #thingy {
   font-size: x-large;
@@ -19,5 +19,5 @@ body {
   margin-right: 20%;
   font-size: x-large;
   font-family: Verdana;
-  color: indigo;
+  color: black;
 }
