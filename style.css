@@ -1,11 +1,18 @@
 body {
   background-color: lightgray
 }
-
+#part2{
+  position: absolute;
+  background-color: lightblue;
+  margin-left: 0%;
+  margin-right: 50%;
+  text-align: left;
+  border: 5px solid blue;
+}
 #part1 {
   background-color: lightblue;
-  margin-left: 10%;
-  margin-right: 10%;
+  margin-left: 20%;
+  margin-right: 20%;
   text-align: center;
   border: 5px solid blue;
 }
