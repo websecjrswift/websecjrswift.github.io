@@ -2,22 +2,35 @@
 <html lang="en" >
 <head>
   <meta charset="UTF-8">
-  <title>CodePen - DatabasePractice</title>
+  <title>CodePen - Auth Practice</title>
   <link rel="stylesheet" href="./style.css">
 
 </head>
 <body>
 <!-- partial:index.partial.html -->
-<div id="part0">
-  <p id="username">Input a username</p>
-  <input type="text" id="usertext"></input>
-  <button id="inputuser">Input Username</button>
-  <ul id="usernamedisplay"></ul>
-  <button id="signout">Sign Out</button>
+<div id="login">
+  <input type="text" id="regemail" placeholder="Register Email"/>
+  <input type="text" id="username" placeholder="Register username"/>
+  <input type="password" id="regpass1" placeholder="Register Password"/>
+  <input type="password" id="regpass2" placeholder="Confirm Password"/>
+  <button type="button" id="register">Click Here To Register</button>
+  <hr>
+  <input type="text" id="logemail" placeholder="Login with Email"/>
+  <input type="password" id="logpass" placeholder="Login Password"/>
+  <button type="button" id="login">Click Here To Login</button>
+</div>
+<hr>
+<div id="loggedin">
+  <p id="usernamedisplay"></p>
+  <button type="button" id="logout">Logout</button>
+</div>
+<hr>
+<div id="rules">
 </div>
 
+
 <div id="part2">
-  <p id="whoOn">Who's on?</p>
+  <p id="whoOn">Who exists?</p>
   <ul id="userLoc">
   </ul>
 </div>
@@ -39,3 +52,4 @@
 
 </body>
 </html>
+
