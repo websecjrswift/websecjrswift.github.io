@@ -20,38 +20,52 @@ let auth = fbauth.getAuth(app);
 let titleRef = rtdb.ref(db, "/");
 let chats = rtdb.child(titleRef, "chats")
 let users = rtdb.child(titleRef, "users")
-/*
-$("#logout").on("click", ()=>{
-  fbauth.signOut(auth);
-});
-*/
 
+//if the user is not an admin, hide the make and kill admin classes
+//else, show them
 let renderUser = function(userObj){
-  //$("#app").html(JSON.stringify(userObj));
   let uid = userObj.uid;
   let usernameRef = rtdb.ref(db, `/users/${uid}/username`);
-  //let username = rtdb.ref(uidRef, username);
-  //console.log(uid);
+  let adminRed = rtdb.ref(db, `/users/${uid}/roles/admin`);
   rtdb.get(usernameRef).then(ss=>{
     $("#usernamedisplay").html(ss.val());
   });
+  rtdb.get(adminRed).then(ss=>{
+    //alert(ss.val());
+    if (ss.val()==true){
+      $("#adminDisplay").show();
+      $(".makeadmin").show();
+      $(".killadmin").show();
+    }
+    else {
+      $("#adminDisplay").hide();
+      $(".makeadmin").hide();
+      $(".killadmin").hide();
+    }
+  });
   $("#logout").on("click", ()=>{
     fbauth.signOut(auth);
-    $("usernamedisplay").html("");
-    $("loggedin").hide();
   })
 }
 
+
+
 fbauth.onAuthStateChanged(auth, user => {
-  //console.log(uidRef.val().username);
   if (!!user){
     $("#login").hide();
     renderUser(user);
-    $("loggedin").show();
-    //$("#usernamedisplay").html(username);
+    $("#loggedin").show();
+    $("#part1").show();
+    $("#part2").show();
+    $("#chat").show();
   }
   else {
     $("#login").show();
+    $("#usernamedisplay").html("");
+    $("#loggedin").hide();
+    $("#part1").hide();
+    $("#part2").hide();
+    $("#chat").hide();
   };
 });
 
@@ -65,7 +79,6 @@ $("#register").on("click", ()=>{
   }
   fbauth.createUserWithEmailAndPassword(auth, email, p1).then(somedata=>{
     let uid = somedata.user.uid;
-    //console.log(uid);
     var username = $("#username").val();
     let userRoleRef = rtdb.ref(db, `/users/${uid}/roles/user`);
     let usernameRef = rtdb.ref(db, `/users/${uid}/username`);
@@ -76,8 +89,6 @@ $("#register").on("click", ()=>{
     rtdb.set(usernameRef, username);
     rtdb.set(adminRoleRef, false);
     rtdb.set(newacctRef, false);
-  //let username = rtdb.ref(uidRef, username);
-  //console.log(uid);
     rtdb.get(usernameRef).then(ss=>{
       $("#usernamedisplay").html(ss.val());
     });
@@ -138,7 +149,12 @@ var makeAdmin = function(target){
   let curTarget = target.currentTarget;
   var curID = $(curTarget).attr("data-id");
   let adminRoleRef = rtdb.ref(db, `/users/${curID}/roles/admin`);
-  rtdb.set(adminRoleRef, true);
+  rtdb.get(adminRoleRef).then(ss=>{
+    if (ss.val() != true){
+      rtdb.set(adminRoleRef, true);
+      alert("you made an admin");
+    }
+  });
 }
   
 
@@ -146,8 +162,13 @@ var killAdmin = function(target){
   let curTarget = target.currentTarget;
   var curID = $(curTarget).attr("data-id");
   let adminRoleRef = rtdb.ref(db, `/users/${curID}/roles/admin`);
-  rtdb.set(adminRoleRef, false);
-}
+  rtdb.get(adminRoleRef).then(ss=>{
+    if (ss.val() != false){
+      rtdb.set(adminRoleRef, false);
+      alert("you killed an admin");
+    };
+  });
+};
 
 rtdb.onValue(users, ss=>{
   $("#userLoc").empty();
@@ -155,10 +176,17 @@ rtdb.onValue(users, ss=>{
     let userIDs = Object.keys(ss.val());
     userIDs.map((anId)=>{
       let user = JSON.stringify(ss.val()[anId].username);
+      let adminval = ss.val()[anId].roles.admin;
       let userinput = user.replace(/"/g, '');
-      $("#userLoc").append(
+      if (adminval == true){
+        $("#userLoc").append(
+        `<div class="user" data-id=${anId}>${userinput + " (admin)"}</div> <button type="button" class="makeadmin" data-id=${anId}>Make Admin</button> <button type="button" class="killadmin" data-id=${anId}>Kill Admin</button>`
+          );
+      }else {
+        $("#userLoc").append(
         `<div class="user" data-id=${anId}>${userinput}</div> <button type="button" class="makeadmin" data-id=${anId}>Make Admin</button> <button type="button" class="killadmin" data-id=${anId}>Kill Admin</button>`
-      );
+          );
+      };
     });
     $(".makeadmin").click(makeAdmin);
     $(".killadmin").click(killAdmin);
