@@ -9,6 +9,8 @@
 <body>
 <!-- partial:index.partial.html -->
 <div id="login">
+  <h id="loginHead">Welcome to Secret Chat</h>
+  <p></p>
   <input type="text" id="regemail" placeholder="Register Email"/>
   <input type="text" id="username" placeholder="Register username"/>
   <input type="password" id="regpass1" placeholder="Register Password"/>
@@ -22,6 +24,7 @@
 <hr>
 <div id="loggedin">
   <p id="usernamedisplay"></p>
+  <p id="adminDisplay">Congrats, you're an admin</p>
   <button type="button" id="logout">Logout</button>
 </div>
 <hr>
@@ -31,6 +34,7 @@
 
 <div id="part2">
   <p id="whoOn">Who exists?</p>
+  <p>(Only admins can change other's roles)</p>
   <ul id="userLoc">
   </ul>
 </div>
