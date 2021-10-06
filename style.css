@@ -1,20 +1,33 @@
 body {
-  background-color: lightgray
+  background-color: black;
 }
+
+#login{
+  text-align: center;
+}
+
+#loginHead {
+  font-size: xxx-large;
+  color: white;
+}
+
 #part2{
   position: absolute;
-  background-color: lightblue;
+  background-color: cyan;
   margin-left: 0%;
   margin-right: 50%;
   text-align: left;
-  border: 5px solid blue;
+  border-radius: 15px 30px;
 }
 #part1 {
-  background-color: lightblue;
+  background-color: cyan;
   margin-left: 20%;
   margin-right: 20%;
   text-align: center;
-  border: 5px solid blue;
+  border-radius: 15px 30px;
+}
+#loggedin {
+  color: white;
 }
 #thingy {
   font-size: x-large;
@@ -26,5 +39,7 @@ body {
   margin-right: 20%;
   font-size: x-large;
   font-family: Verdana;
-  color: black;
+  color: white;
+  background-color: Blue;
+  border-radius: 15px 30px;
 }
