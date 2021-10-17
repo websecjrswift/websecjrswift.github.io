@@ -231,7 +231,6 @@ rtdb.onValue(chatrooms, ss=>{
 
 
 rtdb.onValue(curchat, ss=>{
-  alert("here");
   $("#chatsloc").empty();
   if (ss.val() != null){
     let msgIDs = Object.keys(ss.val());
