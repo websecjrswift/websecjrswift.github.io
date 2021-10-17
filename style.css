@@ -1,5 +1,6 @@
 body {
   background-color: black;
+  font-family: monospace;
 }
 
 #login{
@@ -13,14 +14,14 @@ body {
 
 #part2{
   position: absolute;
-  background-color: cyan;
+  background-color: #63de00;
   margin-left: 0%;
   margin-right: 50%;
   text-align: left;
   border-radius: 15px 30px;
 }
 #part1 {
-  background-color: cyan;
+  background-color: #63de00;
   margin-left: 20%;
   margin-right: 20%;
   text-align: center;
@@ -31,15 +32,26 @@ body {
 }
 #thingy {
   font-size: x-large;
-  font-family: Verdana;
+  font-family: monospace;
 }
 
-#chat {
+#generalchat {
   margin-left: 20%;
   margin-right: 20%;
   font-size: x-large;
   font-family: Verdana;
-  color: white;
-  background-color: Blue;
+  color: #63de00;
+  border-radius: 15px 30px;
+  font-family: monospace;
+  max-height: 400px;
+  overflow: scroll;
+}
+#chatrooms{
+  position: absolute;
+  background-color: #63de00;
+  right: 5px;
+  top: 115px;
+  margin-right: 0%;
+  text-align: right;
   border-radius: 15px 30px;
 }
