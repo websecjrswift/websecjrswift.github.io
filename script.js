@@ -19,36 +19,51 @@ let db = rtdb.getDatabase(app);
 let auth = fbauth.getAuth(app);
 let titleRef = rtdb.ref(db, "/");
 let chats = rtdb.child(titleRef, "chats")
+let chatrooms = rtdb.child(titleRef, "chatrooms")
+let general = rtdb.child(chatrooms, "general")
 let users = rtdb.child(titleRef, "users")
+let signedinusers = rtdb.child(titleRef, "signedinusers")
 
+
+var adminval = null;
+var curuid = "";
+var curusername = "";
+var curchat = general;
 //if the user is not an admin, hide the make and kill admin classes
 //else, show them
 let renderUser = function(userObj){
   let uid = userObj.uid;
+  curuid = uid;
   let usernameRef = rtdb.ref(db, `/users/${uid}/username`);
   let adminRed = rtdb.ref(db, `/users/${uid}/roles/admin`);
+  let signedinRef = rtdb.ref(db, `/users/${uid}/signedin`);
+  rtdb.set(signedinRef, true);
   rtdb.get(usernameRef).then(ss=>{
     $("#usernamedisplay").html(ss.val());
+    curusername = ss.val();
   });
   rtdb.get(adminRed).then(ss=>{
     //alert(ss.val());
+    adminval = ss.val();
+    //alert(adminval);
     if (ss.val()==true){
       $("#adminDisplay").show();
       $(".makeadmin").show();
       $(".killadmin").show();
+      $("#clear").show();
     }
     else {
       $("#adminDisplay").hide();
       $(".makeadmin").hide();
       $(".killadmin").hide();
+      $("#clear").hide();
     }
   });
   $("#logout").on("click", ()=>{
     fbauth.signOut(auth);
+    rtdb.set(signedinRef, false);
   })
 }
-
-
 
 fbauth.onAuthStateChanged(auth, user => {
   if (!!user){
@@ -57,7 +72,8 @@ fbauth.onAuthStateChanged(auth, user => {
     $("#loggedin").show();
     $("#part1").show();
     $("#part2").show();
-    $("#chat").show();
+    $("#generalchat").show();
+    $("#chatrooms").show();
   }
   else {
     $("#login").show();
@@ -65,7 +81,8 @@ fbauth.onAuthStateChanged(auth, user => {
     $("#loggedin").hide();
     $("#part1").hide();
     $("#part2").hide();
-    $("#chat").hide();
+    $("#generalchat").hide();
+    $("#chatrooms").hide();
   };
 });
 
@@ -73,6 +90,8 @@ $("#register").on("click", ()=>{
   let email = $("#regemail").val();
   let p1 = $("#regpass1").val();
   let p2 = $("#regpass2").val();
+  $(".makeadmin").hide();
+  $(".killadmin").hide();
   if (p1 != p2){
     alert("Passwords don't match");
     return;
@@ -84,11 +103,14 @@ $("#register").on("click", ()=>{
     let usernameRef = rtdb.ref(db, `/users/${uid}/username`);
     let newacctRef = rtdb.ref(db, `/users/${uid}/roles/newacct`);
     let adminRoleRef = rtdb.ref(db, `/users/${uid}/roles/admin`);
+    let signedinRef = rtdb.ref(db, `/users/${uid}/signedin`);
+    let chatroomRef = rtdb.ref(db, `/users/${uid}/chatrooms`);
     rtdb.set(userRoleRef, true);
     rtdb.set(newacctRef, true);
     rtdb.set(usernameRef, username);
     rtdb.set(adminRoleRef, false);
     rtdb.set(newacctRef, false);
+    rtdb.set(signedinRef, true);
     rtdb.get(usernameRef).then(ss=>{
       $("#usernamedisplay").html(ss.val());
     });
@@ -105,6 +127,8 @@ $("#register").on("click", ()=>{
 $("#login").on("click", ()=>{
   let email = $("#logemail").val();
   let pwd = $("#logpass").val();
+  $(".makeadmin").hide();
+  $(".killadmin").hide();
   fbauth.signInWithEmailAndPassword(auth, email, pwd).then(
     somedata=>{
       //console.log(somedata);
@@ -123,20 +147,19 @@ var clickHandlerMSG = function(){
   var msg = $("#msg").val();
   var username = $("#usernamedisplay").text();
   var chatmsg = {message: msg, User: username};
-  rtdb.push(chats, chatmsg);
+  rtdb.push(curchat, chatmsg);
 }
-
 
 var clickHandlerEdit = function(target){
   let curTarget = target.currentTarget;
   var curID = $(curTarget).attr("data-id");
   let msg = this.innerHTML;
   let ind = msg.indexOf(":");
-  let msgUser = msg.slice(0, ind);
+  let msgUser = msg.slice(4, ind);
   var username = $("#usernamedisplay").text();
-  if (username == msgUser){
-    let edit = window.prompt("Edit your Message","");
-    this.innerHTML = username + ':"' + edit + '"';
+  if (username == msgUser || adminval == true){
+    let edit = window.prompt("Edit this Message","");
+    this.innerHTML = msgUser + ':"' + edit + '"';
     let message = rtdb.ref(db, "chats/" + curID + "/message");
     rtdb.set(message, edit)
   }
@@ -170,6 +193,63 @@ var killAdmin = function(target){
   });
 };
 
+var makechat = function(user){
+  let chatname = window.prompt("What do you want to call the new chat?", "");
+  let chatroomobj = {name: chatname};
+  rtdb.push(chatrooms, chatroomobj);
+}
+
+var returnToGeneral = function(){
+  curchat = general;
+  $("#person").html("Chatting in general");
+}
+
+var joinChatroom = function(target){
+  let curTarget = target.currentTarget;
+  var curID = $(curTarget).attr("data-id");
+  let chatref = rtdb.ref(db, `/chatrooms/${curID}/name`)
+  rtdb.get(chatref).then(ss=>{
+    $("#person").html("Chatting in " + ss.val());
+  });
+  curchat = rtdb.ref(db, `/chatrooms/${curID}`);
+}
+
+rtdb.onValue(chatrooms, ss=>{
+  $("#usermadechats").empty();
+  let chatIDs = Object.keys(ss.val());
+  chatIDs.map((anId)=>{
+    let name = JSON.stringify(ss.val()[anId].name);
+    if (name != null){
+    let nameinput = name.replace(/"/g, '');
+    $("#usermadechats").append(
+    `<div class="chatroom" data-id=${anId}>${nameinput}</div> <button type="button" class="join" data-id=${anId}>Join Chat</button>`
+    );
+    };
+    $(".join").click(joinChatroom);
+  })
+});
+
+
+rtdb.onValue(curchat, ss=>{
+  alert("here");
+  $("#chatsloc").empty();
+  if (ss.val() != null){
+    let msgIDs = Object.keys(ss.val());
+    msgIDs.map((anId)=>{
+      let msg = JSON.stringify(ss.val()[anId].message);
+      if (msg != null){
+      let user = JSON.stringify(ss.val()[anId].User);
+      let userinput = user.replace(/"/g, '');
+      let msginput = msg.replace(/"/g, '');
+      $("#chatsloc").prepend(
+        `<div class="msg" data-id=${anId}>${">" + userinput + ":" + msginput}</div>`
+      );
+      };
+    });
+    $(".msg").click(clickHandlerEdit);
+  };
+});
+
 rtdb.onValue(users, ss=>{
   $("#userLoc").empty();
   if (ss.val() != null){
@@ -193,22 +273,25 @@ rtdb.onValue(users, ss=>{
   }         
 });
 
-rtdb.onValue(chats, ss=>{
-  //alert(JSON.stringify(ss.val()));
-  $("#chatsloc").empty();
-  if (ss.val() != null){
-    let msgIDs = Object.keys(ss.val());
-    msgIDs.map((anId)=>{
-      let msg = JSON.stringify(ss.val()[anId].message);
-      let user = JSON.stringify(ss.val()[anId].User);
-      let userinput = user.replace(/"/g, '');
-      $("#chatsloc").append(
-        `<div class="msg" data-id=${anId}>${userinput + ":" + msg}</div>`
-      );
-    });
-    $(".msg").click(clickHandlerEdit);
-  };
+rtdb.onChildChanged(users, ss=>{
+  $("#signedinLoc").empty();
+  let users = rtdb.ref(db, '/users')
+  rtdb.get(users).then(ss=>{
+    let uids = Object.keys(ss.val());
+    uids.map((anId)=>{
+      let signedinval = ss.val()[anId].signedin;
+      let username = JSON.stringify(ss.val()[anId].username);
+      let userinput = username.replace(/"/g, '');
+      //alert('here');
+      if (signedinval == true) {
+        $('#signedinLoc').append(
+        `<p>${userinput}</p>`
+        );
+      };
+    })
+  })
 });
+
 
 var clickHandlerClear = function(){
   var msg = $("#msg").val();
@@ -216,6 +299,7 @@ var clickHandlerClear = function(){
   $("#chatsloc").html("no messages");
 }
 
-
 $("#sendmsg").click(clickHandlerMSG);
 $("#clear").click(clickHandlerClear);
+$("#return").click(returnToGeneral);
+$("#makechat").click(makechat);
