@@ -273,10 +273,10 @@ rtdb.onValue(users, ss=>{
 });
 
 rtdb.onChildChanged(users, ss=>{
-  $("#signedinLoc").empty();
   let users = rtdb.ref(db, '/users')
   rtdb.get(users).then(ss=>{
     let uids = Object.keys(ss.val());
+    $("#signedinLoc").empty();
     uids.map((anId)=>{
       let signedinval = ss.val()[anId].signedin;
       let username = JSON.stringify(ss.val()[anId].username);
