@@ -148,6 +148,24 @@ var clickHandlerMSG = function(){
   var username = $("#usernamedisplay").text();
   var chatmsg = {message: msg, User: username};
   rtdb.push(curchat, chatmsg);
+  rtdb.get(curchat).then(ss=>{
+  $("#chatsloc").empty();
+  if (ss.val() != null){
+    let msgIDs = Object.keys(ss.val());
+    msgIDs.map((anId)=>{
+      let msg = JSON.stringify(ss.val()[anId].message);
+      if (msg != null){
+      let user = JSON.stringify(ss.val()[anId].User);
+      let userinput = user.replace(/"/g, '');
+      let msginput = msg.replace(/"/g, '');
+      $("#chatsloc").prepend(
+        `<div class="msg" data-id=${anId}>${">" + userinput + ":" + msginput}</div>`
+      );
+      };
+    });
+    $(".msg").click(clickHandlerEdit);
+  };
+  })
 }
 
 var clickHandlerEdit = function(target){
@@ -159,7 +177,8 @@ var clickHandlerEdit = function(target){
   var username = $("#usernamedisplay").text();
   if (username == msgUser || adminval == true){
     let edit = window.prompt("Edit this Message","");
-    this.innerHTML = msgUser + ':"' + edit + '"';
+    let editinput = edit.replace(/"/g, '');
+    this.innerHTML = ">" + msgUser + ":" + editinput;
     let message = rtdb.ref(db, "chats/" + curID + "/message");
     rtdb.set(message, edit)
   }
@@ -202,6 +221,24 @@ var makechat = function(user){
 var returnToGeneral = function(){
   curchat = general;
   $("#person").html("Chatting in general");
+  rtdb.get(curchat).then(ss=>{
+  $("#chatsloc").empty();
+  if (ss.val() != null){
+    let msgIDs = Object.keys(ss.val());
+    msgIDs.map((anId)=>{
+      let msg = JSON.stringify(ss.val()[anId].message);
+      if (msg != null){
+      let user = JSON.stringify(ss.val()[anId].User);
+      let userinput = user.replace(/"/g, '');
+      let msginput = msg.replace(/"/g, '');
+      $("#chatsloc").prepend(
+        `<div class="msg" data-id=${anId}>${">" + userinput + ":" + msginput}</div>`
+      );
+      };
+    });
+  }
+    $(".msg").click(clickHandlerEdit);
+  });
 }
 
 var joinChatroom = function(target){
@@ -212,6 +249,24 @@ var joinChatroom = function(target){
     $("#person").html("Chatting in " + ss.val());
   });
   curchat = rtdb.ref(db, `/chatrooms/${curID}`);
+  rtdb.get(curchat).then(ss=>{
+  $("#chatsloc").empty();
+  if (ss.val() != null){
+    let msgIDs = Object.keys(ss.val());
+    msgIDs.map((anId)=>{
+      let msg = JSON.stringify(ss.val()[anId].message);
+      if (msg != null){
+      let user = JSON.stringify(ss.val()[anId].User);
+      let userinput = user.replace(/"/g, '');
+      let msginput = msg.replace(/"/g, '');
+      $("#chatsloc").prepend(
+        `<div class="msg" data-id=${anId}>${">" + userinput + ":" + msginput}</div>`
+      );
+      };
+    });
+  }
+    $(".msg").click(clickHandlerEdit);
+  });
 }
 
 rtdb.onValue(chatrooms, ss=>{
@@ -229,6 +284,28 @@ rtdb.onValue(chatrooms, ss=>{
   })
 });
 
+rtdb.onChildChanged(chatrooms, ss=>{
+  rtdb.get(curchat).then(ss=>{
+  $("#chatsloc").empty();
+  if (ss.val() != null){
+    let msgIDs = Object.keys(ss.val());
+    msgIDs.map((anId)=>{
+      let msg = JSON.stringify(ss.val()[anId].message);
+      if (msg != null){
+      let user = JSON.stringify(ss.val()[anId].User);
+      let userinput = user.replace(/"/g, '');
+      let msginput = msg.replace(/"/g, '');
+      $("#chatsloc").prepend(
+        `<div class="msg" data-id=${anId}>${">" + userinput + ":" + msginput}</div>`
+      );
+      };
+    });
+  }
+    $(".msg").click(clickHandlerEdit);
+  });
+})
+
+let testvar = rtdb.ref(db, `/chatrooms/-MmELPwV1w7-XZG0n0-O`);
 
 rtdb.onValue(curchat, ss=>{
   $("#chatsloc").empty();
@@ -256,6 +333,7 @@ rtdb.onValue(users, ss=>{
     userIDs.map((anId)=>{
       let user = JSON.stringify(ss.val()[anId].username);
       let adminval = ss.val()[anId].roles.admin;
+      if (user != null){
       let userinput = user.replace(/"/g, '');
       if (adminval == true){
         $("#userLoc").append(
@@ -265,6 +343,7 @@ rtdb.onValue(users, ss=>{
         $("#userLoc").append(
         `<div class="user" data-id=${anId}>${userinput}</div> <button type="button" class="makeadmin" data-id=${anId}>Make Admin</button> <button type="button" class="killadmin" data-id=${anId}>Kill Admin</button>`
           );
+      };
       };
     });
     $(".makeadmin").click(makeAdmin);
@@ -291,14 +370,6 @@ rtdb.onChildChanged(users, ss=>{
   })
 });
 
-
-var clickHandlerClear = function(){
-  var msg = $("#msg").val();
-  rtdb.set(chats, []);
-  $("#chatsloc").html("no messages");
-}
-
 $("#sendmsg").click(clickHandlerMSG);
-$("#clear").click(clickHandlerClear);
 $("#return").click(returnToGeneral);
 $("#makechat").click(makechat);
