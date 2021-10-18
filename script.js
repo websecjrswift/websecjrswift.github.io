@@ -29,6 +29,7 @@ var adminval = null;
 var curuid = "";
 var curusername = "";
 var curchat = general;
+var curchatname = `/chatrooms/general`;
 //if the user is not an admin, hide the make and kill admin classes
 //else, show them
 let renderUser = function(userObj){
@@ -161,7 +162,7 @@ var clickHandlerEdit = function(target){
     let edit = window.prompt("Edit this Message","");
     let editinput = edit.replace(/"/g, '');
     this.innerHTML = ">" + msgUser + ":" + editinput;
-    let message = rtdb.ref(db, "chats/" + curID + "/message");
+    let message = rtdb.ref(db, `${curchatname}/${curID}/message`);
     rtdb.set(message, edit)
   }
   else {
@@ -209,8 +210,10 @@ var joinChatroom = function(target){
   });
   if (curID != 'general'){
     curchat = rtdb.ref(db, `/chatrooms/${curID}`);
+    curchatname = `/chatrooms/${curID}`;
   } else {
     curchat = rtdb.ref(db, `/chatrooms/general`);
+    curchatname = `/chatrooms/general`;
   }
   rtdb.get(curchat).then(ss=>{
   $("#chatsloc").empty();
