@@ -249,7 +249,7 @@ var joinChatroom = function(target){
     $("#person").html("Chatting in " + ss.val());
   });
   curchat = rtdb.ref(db, `/chatrooms/${curID}`);
-  rtdb.get(curchat).then(ss=>{
+  rtdb.onValue(curchat, ss=>{
   $("#chatsloc").empty();
   if (ss.val() != null){
     let msgIDs = Object.keys(ss.val());
@@ -283,7 +283,7 @@ rtdb.onValue(chatrooms, ss=>{
     $(".join").click(joinChatroom);
   })
 });
-
+/*
 rtdb.onChildChanged(chatrooms, ss=>{
   rtdb.get(curchat).then(ss=>{
   $("#chatsloc").empty();
@@ -304,7 +304,7 @@ rtdb.onChildChanged(chatrooms, ss=>{
     $(".msg").click(clickHandlerEdit);
   });
 })
-
+*/
 let testvar = rtdb.ref(db, `/chatrooms/-MmELPwV1w7-XZG0n0-O`);
 
 rtdb.onValue(curchat, ss=>{
