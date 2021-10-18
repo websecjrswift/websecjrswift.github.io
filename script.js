@@ -221,7 +221,7 @@ var makechat = function(user){
 var returnToGeneral = function(){
   curchat = general;
   $("#person").html("Chatting in general");
-  rtdb.get(curchat).then(ss=>{
+  rtdb.onValue(curchat,ss=>{
   $("#chatsloc").empty();
   if (ss.val() != null){
     let msgIDs = Object.keys(ss.val());
