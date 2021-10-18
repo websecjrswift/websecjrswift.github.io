@@ -148,25 +148,7 @@ var clickHandlerMSG = function(){
   var username = $("#usernamedisplay").text();
   var chatmsg = {message: msg, User: username};
   rtdb.push(curchat, chatmsg);
-  rtdb.get(curchat).then(ss=>{
-  $("#chatsloc").empty();
-  if (ss.val() != null){
-    let msgIDs = Object.keys(ss.val());
-    msgIDs.map((anId)=>{
-      let msg = JSON.stringify(ss.val()[anId].message);
-      if (msg != null){
-      let user = JSON.stringify(ss.val()[anId].User);
-      let userinput = user.replace(/"/g, '');
-      let msginput = msg.replace(/"/g, '');
-      $("#chatsloc").prepend(
-        `<div class="msg" data-id=${anId}>${">" + userinput + ":" + msginput}</div>`
-      );
-      };
-    });
-    $(".msg").click(clickHandlerEdit);
-  };
-  })
-}
+};
 
 var clickHandlerEdit = function(target){
   let curTarget = target.currentTarget;
@@ -218,29 +200,6 @@ var makechat = function(user){
   rtdb.push(chatrooms, chatroomobj);
 }
 
-var returnToGeneral = function(){
-  curchat = general;
-  $("#person").html("Chatting in general");
-  rtdb.get(curchat).then(ss=>{
-  $("#chatsloc").empty();
-  if (ss.val() != null){
-    let msgIDs = Object.keys(ss.val());
-    msgIDs.map((anId)=>{
-      let msg = JSON.stringify(ss.val()[anId].message);
-      if (msg != null){
-      let user = JSON.stringify(ss.val()[anId].User);
-      let userinput = user.replace(/"/g, '');
-      let msginput = msg.replace(/"/g, '');
-      $("#chatsloc").prepend(
-        `<div class="msg" data-id=${anId}>${">" + userinput + ":" + msginput}</div>`
-      );
-      };
-    });
-  }
-    $(".msg").click(clickHandlerEdit);
-  });
-}
-
 var joinChatroom = function(target){
   let curTarget = target.currentTarget;
   var curID = $(curTarget).attr("data-id");
@@ -248,8 +207,12 @@ var joinChatroom = function(target){
   rtdb.get(chatref).then(ss=>{
     $("#person").html("Chatting in " + ss.val());
   });
-  curchat = rtdb.ref(db, `/chatrooms/${curID}`);
-  rtdb.onValue(curchat, ss=>{
+  if (curID != 'general'){
+    curchat = rtdb.ref(db, `/chatrooms/${curID}`);
+  } else {
+    curchat = rtdb.ref(db, `/chatrooms/general`);
+  }
+  rtdb.get(curchat).then(ss=>{
   $("#chatsloc").empty();
   if (ss.val() != null){
     let msgIDs = Object.keys(ss.val());
@@ -283,7 +246,7 @@ rtdb.onValue(chatrooms, ss=>{
     $(".join").click(joinChatroom);
   })
 });
-/*
+
 rtdb.onChildChanged(chatrooms, ss=>{
   rtdb.get(curchat).then(ss=>{
   $("#chatsloc").empty();
@@ -307,7 +270,7 @@ rtdb.onChildChanged(chatrooms, ss=>{
 
 let testvar = rtdb.ref(db, `/chatrooms/-MmELPwV1w7-XZG0n0-O`);
 
-rtdb.onValue(curchat, ss=>{
+rtdb.get(curchat).then(ss=>{
   $("#chatsloc").empty();
   if (ss.val() != null){
     let msgIDs = Object.keys(ss.val());
@@ -325,7 +288,7 @@ rtdb.onValue(curchat, ss=>{
     $(".msg").click(clickHandlerEdit);
   };
 });
-*/
+
 rtdb.onValue(users, ss=>{
   $("#userLoc").empty();
   if (ss.val() != null){
@@ -371,5 +334,4 @@ rtdb.onChildChanged(users, ss=>{
 });
 
 $("#sendmsg").click(clickHandlerMSG);
-$("#return").click(returnToGeneral);
 $("#makechat").click(makechat);
