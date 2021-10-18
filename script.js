@@ -221,7 +221,7 @@ var makechat = function(user){
 var returnToGeneral = function(){
   curchat = general;
   $("#person").html("Chatting in general");
-  rtdb.onValue(curchat,ss=>{
+  rtdb.get(curchat).then(ss=>{
   $("#chatsloc").empty();
   if (ss.val() != null){
     let msgIDs = Object.keys(ss.val());
@@ -304,7 +304,7 @@ rtdb.onChildChanged(chatrooms, ss=>{
     $(".msg").click(clickHandlerEdit);
   });
 })
-*/
+
 let testvar = rtdb.ref(db, `/chatrooms/-MmELPwV1w7-XZG0n0-O`);
 
 rtdb.onValue(curchat, ss=>{
@@ -325,7 +325,7 @@ rtdb.onValue(curchat, ss=>{
     $(".msg").click(clickHandlerEdit);
   };
 });
-
+*/
 rtdb.onValue(users, ss=>{
   $("#userLoc").empty();
   if (ss.val() != null){
